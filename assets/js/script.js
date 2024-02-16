@@ -4,9 +4,9 @@ $(document).ready(function () {
 
     e.preventDefault();
     $("#resultado").html("");
-      $("#idHero").val("");
-     $("#chartContainer").html("");
-      
+    $("#idHero").val("");
+    $("#chartContainer").html("");
+
     validar(number);
   });
 
@@ -14,17 +14,14 @@ $(document).ready(function () {
 
   function validar(num) {
     let expresion = /^[0-9]+$/;
-      if (!expresion.test(num)) {
-        alert("ingrese un numero valido");
-    } 
-
-    $.ajax({
-      datatype: "json",
-      method: "GET",
-      url: `https://superheroapi.com/api.php/2619421814940190/${num}`,
-      success: function (respuesta) {
-        if (respuesta.response === "success") {
-          let heroe = `
+    if (expresion.test(num)) {
+      $.ajax({
+        datatype: "json",
+        method: "GET",
+        url: `https://superheroapi.com/api.php/2619421814940190/${num}`,
+        success: function (respuesta) {
+          if (respuesta.response === "success") {
+            let heroe = `
 <h3>Super Heroe Encontrado</h3>
     <div class="card">
       <div class="row">
@@ -67,48 +64,49 @@ $(document).ready(function () {
 
 
         `;
-          $("#resultado").append(heroe);
+            $("#resultado").append(heroe);
 
-          //Agregamos los valores de las estadisticas
+            //Agregamos los valores de las estadisticas
 
-          let datosXY = [];
-          for (let key in respuesta.powerstats) {
-            datosXY.push({
-              label: key,
-              y: parseInt(respuesta.powerstats[key]),
-            });
-          }
+            let datosXY = [];
+            for (let key in respuesta.powerstats) {
+              datosXY.push({
+                label: key,
+                y: parseInt(respuesta.powerstats[key]),
+              });
+            }
 
-          console.log(datosXY);
+            console.log(datosXY);
 
-          let option = {
-            title: {
-              text: `Estadísticas de Poder para
-${respuesta.name}`,
-            },
-            data: [
-              {
-                type: "pie",
-                startAngle: 45,
-                showInLegend: "true",
-                legendText: "{label}",
-                indexLabel: "{label} ({y})",
-                yValueFormatString: "#,##0.#" % "",
-                dataPoints: datosXY,
+            let option = {
+              title: {
+                text: `Estadísticas de Poder para ${respuesta.name}`,
               },
-            ],
-          };
+              data: [
+                {
+                  type: "pie",
+                  startAngle: 45,
+                  showInLegend: "true",
+                  legendText: "{label}",
+                  indexLabel: "{label} ({y})",
+                  yValueFormatString: "#,##0.#" % "",
+                  dataPoints: datosXY,
+                },
+              ],
+            };
 
-          $("#chartContainer").CanvasJSChart(option);
-        } else {
-          alert("No se encontro el heroe con ese id");
-        }
-      },
+            $("#chartContainer").CanvasJSChart(option);
+          } else {
+            alert("No se encontro el heroe con ese id");
+          }
+        },
 
-      error: function (error) {
-        alert("no se encontro el heroe");
-      },
-    });
+        error: function (error) {
+          alert("no se encontro el heroe");
+        },
+      });
+    } else {
+      alert("Ingresa un valor numerico");
+    }
   }
-
 });
